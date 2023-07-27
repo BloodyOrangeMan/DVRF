@@ -1,0 +1,11 @@
+--- forward-details-origin.lua	2023-07-19 22:14:17.423645900 +0800
++++ forward-details-fix.lua	2023-07-26 21:30:25.896963500 +0800
+@@ -31,7 +31,7 @@
+         return filteredInput
+     end
+ 
+-	m.title = "%s - %s" %{ translate("Firewall - Port Forwards"), escape(name) }
++	m.title = "%s - %s" %{ translate("Firewall - Port Forwards"), luci.util.pcdata(name)  }
+ end
+ 
+ s = m:section(NamedSection, arg[1], "redirect", "")

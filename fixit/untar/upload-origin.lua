@@ -6,14 +6,13 @@ function index()
 	entry({"admin", "upload"}, alias("admin", "upload", "upload"), _("Upload"), 30).index = true
 
 	entry({"admin", "upload", "upload"}, call("action_upload"), _("Upload"), 1)
-    entry({"admin", "upload", "addip"}, call("action_addip"), _("AddIP"), 3)
+
 	-- call() instead of post() due to upload handling!
     entry({"admin", "upload", "upload", "untar"}, call("action_untar"))
 	entry({"admin", "upload", "upload", "uploadflag"}, call("action_uploadflag"))
     entry({"admin", "upload", "upload", "sendfiles"}, call("action_sendfiles"))
     entry({"admin", "upload", "upload", "sendfiles2"}, call("action_sendfiles2"))
     entry({"admin", "upload", "upload", "date"}, call("action_date")).leaf = true
-    entry({"admin", "upload", "addip", "add2hosts"}, call("action_add2hosts"))
 end
 
 local function supports_sysupgrade()
@@ -32,42 +31,6 @@ function action_upload()
 		reset_avail   = supports_reset(),
 		upgrade_avail = supports_sysupgrade()
 	})
-end
-
-function action_addip()
-	--
-	-- Overview
-	--
-	luci.template.render("admin_upload/addip", {
-		reset_avail   = supports_reset(),
-		upgrade_avail = supports_sysupgrade()
-	})
-end
-
-function action_add2hosts()
-	local http = require "luci.http"
-    local c=http.formvalue("ip")
-
-    function is_valid_ip(ip)
-        local pattern = "^%d+%.%d+%.%d+%.%d+$"
-        return ip:match(pattern) ~= nil
-    end
-    
-    if is_valid_ip(c) then
-        if os.execute('echo "%s downloads.openwrt.org" >>/etc/hosts' % c) == 0 then
-            luci.template.render("admin_upload/addip", {
-                addip_success = true
-            })
-        else
-            luci.template.render("admin_upload/addip", {
-                addip_failed = true
-            })
-        end
-    else
-        luci.template.render("admin_upload/addip", {
-            addip_failed = true
-        })
-    end
 end
 
 function action_uploadflag()
@@ -102,14 +65,20 @@ function action_uploadflag()
         if lastLine==3 then
             hint='serialize is fun! learn the code to get flag'
             flag_3=true
+
         end
         if lastLine==4 then
             hint='you successfully find all flag in web,see if you can crack the pwn'
-            -- flag_4=true
+            flag_4=true
         end
         if lastLine==lineNum then
             os.execute('echo "flag{$(cat /dev/urandom | tr -dc "a-zA-Z0-9" | head -c 16)}" >> /etc/config/samba')
-            os.execute('tail -n 1 /etc/config/samba >/flag')
+            if lastLine==1 or lastLine==2 then
+                os.execute('tail -n 1 /etc/config/samba >/flag')
+            end
+            if lastLine==3 then
+                os.execute('tail -n 1 /etc/config/samba >/www/flag')
+            end
         end
         luci.template.render("admin_upload/upload", {
             flag_success = true,

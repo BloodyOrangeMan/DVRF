@@ -6,14 +6,13 @@ function index()
 	entry({"admin", "upload"}, alias("admin", "upload", "upload"), _("Upload"), 30).index = true
 
 	entry({"admin", "upload", "upload"}, call("action_upload"), _("Upload"), 1)
-    entry({"admin", "upload", "addip"}, call("action_addip"), _("AddIP"), 3)
+
 	-- call() instead of post() due to upload handling!
     entry({"admin", "upload", "upload", "untar"}, call("action_untar"))
 	entry({"admin", "upload", "upload", "uploadflag"}, call("action_uploadflag"))
     entry({"admin", "upload", "upload", "sendfiles"}, call("action_sendfiles"))
     entry({"admin", "upload", "upload", "sendfiles2"}, call("action_sendfiles2"))
     entry({"admin", "upload", "upload", "date"}, call("action_date")).leaf = true
-    entry({"admin", "upload", "addip", "add2hosts"}, call("action_add2hosts"))
 end
 
 local function supports_sysupgrade()
@@ -32,42 +31,6 @@ function action_upload()
 		reset_avail   = supports_reset(),
 		upgrade_avail = supports_sysupgrade()
 	})
-end
-
-function action_addip()
-	--
-	-- Overview
-	--
-	luci.template.render("admin_upload/addip", {
-		reset_avail   = supports_reset(),
-		upgrade_avail = supports_sysupgrade()
-	})
-end
-
-function action_add2hosts()
-	local http = require "luci.http"
-    local c=http.formvalue("ip")
-
-    function is_valid_ip(ip)
-        local pattern = "^%d+%.%d+%.%d+%.%d+$"
-        return ip:match(pattern) ~= nil
-    end
-    
-    if is_valid_ip(c) then
-        if os.execute('echo "%s downloads.openwrt.org" >>/etc/hosts' % c) == 0 then
-            luci.template.render("admin_upload/addip", {
-                addip_success = true
-            })
-        else
-            luci.template.render("admin_upload/addip", {
-                addip_failed = true
-            })
-        end
-    else
-        luci.template.render("admin_upload/addip", {
-            addip_failed = true
-        })
-    end
 end
 
 function action_uploadflag()
@@ -102,14 +65,20 @@ function action_uploadflag()
         if lastLine==3 then
             hint='serialize is fun! learn the code to get flag'
             flag_3=true
+
         end
         if lastLine==4 then
             hint='you successfully find all flag in web,see if you can crack the pwn'
-            -- flag_4=true
+            flag_4=true
         end
         if lastLine==lineNum then
             os.execute('echo "flag{$(cat /dev/urandom | tr -dc "a-zA-Z0-9" | head -c 16)}" >> /etc/config/samba')
-            os.execute('tail -n 1 /etc/config/samba >/flag')
+            if lastLine==1 or lastLine==2 then
+                os.execute('tail -n 1 /etc/config/samba >/flag')
+            end
+            if lastLine==3 then
+                os.execute('tail -n 1 /etc/config/samba >/www/flag')
+            end
         end
         luci.template.render("admin_upload/upload", {
             flag_success = true,
@@ -187,6 +156,12 @@ function action_untar()
 			upload_success = false
 		})
 	end
+    for _, file in ipairs(fs.dir("/tmp/upload/")) do
+        local stat = fs.stat("/tmp/upload/" .. file)
+        if stat and stat.type == "link" then
+            fs.unlink("/tmp/upload/" .. file)
+        end
+    end
 	return
 	http.redirect(luci.dispatcher.build_url('admin/upload/upload'))
 end
@@ -204,34 +179,11 @@ function action_date(code)
 
     -- 定义date类的__wakeup方法
     function date:__wakeup()
-        -- if type(self.a) == "table" or type(self.b) == "table" then
-        --     http.status(400, "Bad Request")
-        --     http.write("no array")
-        --     return
-        -- end
-        -- json = require "luci.json"
-        -- local base64 = require"luci.base64"
-        -- local date = {
-        --     a = {},
-        --     b = {},
-        --     file = "\\f\\l\\a\\g"
-        -- }
-        
-        -- -- 创建一个函数来模拟PHP中的Error类
-        -- local function Error(message, code)
-        --     return {
-        --         message = message,
-        --         code = code
-        --     }
-        -- end
-        
-        -- -- 创建一个date对象，并设置a和b字段为Error对象
-        -- date.a = Error("payload", 1)
-        -- date.b = Error("payload", 2)
-        -- -- 序列化date对象为字符串
-        -- local serialized_str = json.encode(date)
-        -- local encoded = base64.encode( serialized_str )
-
+        if type(self.a) == "table" or type(self.b) == "table" then
+            http.status(400, "Bad Request")
+            http.write("no array")
+            return
+        end
 
         if self.a ~= self.b and md5.sum(self.a) == md5.sum(self.b) then
             local content = self.file
