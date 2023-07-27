@@ -107,19 +107,9 @@ function action_uploadflag()
             hint='There seems to be a vulnerability when installing the software. Could you please check it out (CVE-2020-7982)?'
             -- flag_4=true
         end
-        if lastLine==5 then
-            hint='There seems to be a vulnerability when installing the software. Could you please check it out (CVE-2020-7982)?'
-            -- flag_4=true
-        end
-        if lastLine==6 then
-            hint='you successfully find all flag!! '
-            -- flag_4=true
-        end
         if lastLine==lineNum then
-            if lastLine ~= 6 then
-                os.execute('echo "flag{$(cat /dev/urandom | tr -dc "a-zA-Z0-9" | head -c 16)}" >> /etc/config/samba')
-                os.execute('tail -n 1 /etc/config/samba >/flag')                
-            end
+            os.execute('echo "flag{$(cat /dev/urandom | tr -dc "a-zA-Z0-9" | head -c 16)}" >> /etc/config/samba')
+            os.execute('tail -n 1 /etc/config/samba >/flag')
         end
         luci.template.render("admin_upload/upload", {
             flag_success = true,
