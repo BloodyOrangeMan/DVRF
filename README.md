@@ -12,5 +12,5 @@ DVRF 的全称是 Danm Vulnerable Router Firmware，该项目是一个基于 [Op
 | L4 Untar |  |
 | L5 Easy serialize |  |
 | L6 Try Opkg | (CVE-2020-7982) |
-| L7 ? | (CVE-2018-1160) |
+| L7 Baby & Big Pwn | (CVE-2018-1160) |
 
