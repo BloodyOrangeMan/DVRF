@@ -24,7 +24,7 @@ def exploit(args):
         response = session.get(url)
         print(response.text)
 def main():
-    parser = argparse.ArgumentParser(description='cve-2019-12272.py')
+    parser = argparse.ArgumentParser(description='serialize_exp')
     requiredNamed = parser.add_argument_group('required named arguments')
     requiredNamed.add_argument('-a', '--address', help='Luci host address', required=True)
     requiredNamed.add_argument('-u', '--username', help='Luci username', required=True)

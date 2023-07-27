@@ -159,7 +159,7 @@ def exploit(args):
     visit_thread.start()
     listen_thread.start()
 def main():
-    parser = argparse.ArgumentParser(description='login.py')
+    parser = argparse.ArgumentParser(description='untar_exp')
     requiredNamed = parser.add_argument_group('required named arguments')
     requiredNamed.add_argument('-a', '--address', help='Luci host address', required=True)
     requiredNamed.add_argument('-u', '--username', help='Luci username', required=True)

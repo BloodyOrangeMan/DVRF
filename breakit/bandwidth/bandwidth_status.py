@@ -57,7 +57,7 @@ def exploit(address, username, password, command):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='cve-2019-12272.py')
+    parser = argparse.ArgumentParser(description='bandwidth_status_exp')
     requiredNamed = parser.add_argument_group('required named arguments')
     requiredNamed.add_argument(
         '-a', '--address', help='Luci host address', required=True)
