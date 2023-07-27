@@ -104,7 +104,7 @@ function action_uploadflag()
             flag_3=true
         end
         if lastLine==4 then
-            hint='There seems to be a vulnerability when installing the software. Could you please check it out (CVE-2020-7982)?'
+            hint='you successfully find all flag in web,see if you can crack the pwn'
             -- flag_4=true
         end
         if lastLine==lineNum then
