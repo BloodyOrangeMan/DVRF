@@ -1,0 +1,31 @@
+<%+header%>
+
+<h2 name="content"><%:AddIP2Hosts operations%></h2>
+
+<ul class="cbi-tabmenu">
+	<li class="cbi-tab"><a href="#"><%:Actions%></a></li>
+</ul>
+
+<div class="cbi-section">
+	<h3><%:ADD IP%></h3>
+	<div class="cbi-section-descr"><%:Please input a ip address. After submitted, it will be added to the "/etc/hosts" file.%></div>
+	<div class="cbi-section-node">
+		<form  id="uploadForm" class="inline" method="post" action="<%=url('admin/upload/addip/add2hosts')%>" enctype="multipart/form-data">
+			<div class="cbi-value cbi-value-last">
+				<label class="cbi-value-title" for="archive"><%:Add IP%>:</label>
+				<div class="cbi-value-field">
+					<input type="hidden" name="token" value="<%=token%>" />
+					<input class="cbi-input-text" type="text" name="ip" />
+					<input type="submit" class="cbi-button cbi-button-action important" name="upload" value="<%:Submit IP...%>" />
+				</div>
+			</div>
+		</form>
+		<% if addip_success then %>
+			<div class="cbi-section-message cbi-section-message-success"><%:IP added.%></div>
+        <% end %>
+        <% if addip_failed then %>
+			<div class="cbi-section-error"><%:The address does not appear to be a valid ip addresss.%></div>
+		<% end %>
+	</div>
+</div>
+<%+footer%>
